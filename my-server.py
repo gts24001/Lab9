@@ -22,7 +22,7 @@ def idCheck():
       print("Yes!")
    else: 
       print("Failed identifier")
-   return "done:  " + uuid
+   return "done:  " + uuid + " \n "
 
 if __name__ == "__main__":
    app.run(host='0.0.0.0')

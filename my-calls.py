@@ -29,8 +29,10 @@ response = httpx.post(url + "echo", data=mydata)
 # Print the response
 print(response.status_code)
 print(response.text) 
+print()
 
 response = httpx.post(url + "uuid", data=mydata)
 # Print the response
 print(response.status_code)
 print(response.text)
+print()
