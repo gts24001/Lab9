@@ -1,7 +1,11 @@
 import uuid
+import jwt
+import datetime
 from flask import Flask, request
 
 app = Flask(__name__)
+
+SECRET_KEY = "secret"
 
 my_uuid = "45e02918-cfa9-11f0-aba5-7ced8ddab084"
 
@@ -29,7 +33,7 @@ def get_token():
     payload = {
         "jti": str(uuid.uuid4()),
         "user_id": 1,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
+        "exp": datetime.datetime.estnow() + datetime.timedelta(minutes=5)
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token
