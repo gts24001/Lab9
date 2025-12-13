@@ -36,3 +36,9 @@ response = httpx.post(url + "uuid", data=mydata)
 print(response.status_code)
 print(response.text)
 print()
+
+
+headers = {
+    "Authorization": f"Bearer {token}"
+}
+httpx.get(url + "secure", headers=headers)
