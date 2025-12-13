@@ -1,51 +1,39 @@
-import uuid
 import jwt
 import datetime
-from flask import Flask, request
+import uuid
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
 SECRET_KEY = "secret"
 
-my_uuid = "45e02918-cfa9-11f0-aba5-7ced8ddab084"
-
 @app.route("/")
-def hello():
-   return " you called \n"
-
-# curl -d "text=Hello!&param2=value2" -X POST http://localhost:5000/echo
-@app.route("/echo", methods=['POST'])
-def echo():
-   return "You said: " + request.form['text']
-
-# curl -d "my_uuid=xxxx" -X POST http://localhost:5000/my_uuid
-@app.route("/my_uuid", methods=['POST'])
-def idCheck():
-   myUuid = str(request.form['my_uuid'] )
-   if (myUuid == my_uuid): 
-      print("Yes!")
-   else: 
-      print("Failed identifier")
-   return "done:  " + my_uuid + " \n "
+def home():
+    return "Server is running\n"
 
 @app.route("/token")
-def get_token():
+def generate_token():
     payload = {
         "jti": str(uuid.uuid4()),
         "user_id": 1,
-        "exp": datetime.datetime.estnow() + datetime.timedelta(minutes=5)
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
-    return token
+    return jsonify({"token": token})
 
 @app.route("/secure")
 def secure():
-    auth = request.headers.get("Authorization")
-    token = auth.split(" ")[1]
-    decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-    return "Access granted"
+    auth_header = request.headers.get("Authorization")
 
+    if not auth_header:
+        return "Missing Authorization header", 401
 
+    try:
+        token = auth_header.split(" ")[1]
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return f"Access granted for user {decoded['user_id']}\n"
+    except Exception as e:
+        return f"Invalid token: {str(e)}", 401
 
 if __name__ == "__main__":
-   app.run(host='0.0.0.0')
+    app.run(host="0.0.0.0", port=5000)

@@ -1,44 +1,17 @@
 import httpx
-import uuid
-
-
-#url = "https://cautious-doodle-pjpjx694jxvcr944-5000.app.github.dev/"
 
 url = "http://localhost:5000/"
 
+# Get JWT token
+response = httpx.get(url + "token")
+token = response.json()["token"]
+print("JWT received:", token, "\n")
 
-response = httpx.get(url)
-print(response.status_code)
-print(response)
+# Use JWT to access secure endpoint
+headers = {"Authorization": f"Bearer {token}"}
+secure_response = httpx.get(url + "secure", headers=headers)
 
-uuid = "45e02918-cfa9-11f0-aba5-7ced8ddab084"
+print("Secure endpoint response:")
+print(secure_response.status_code)
+print(secure_response.text)
 
-response = httpx.get(url)
-print(response.status_code)
-print(response.text)
-
-mydata = {
-    "uuid": uuid,
-    "text": "Hello Prof!",
-    "param2": "Making a POST request",
-    "body": "my own value"
-}
-
-# A POST request to the API
-response = httpx.post(url + "echo", data=mydata)
-# Print the response
-print(response.status_code)
-print(response.text) 
-print()
-
-response = httpx.post(url + "uuid", data=mydata)
-# Print the response
-print(response.status_code)
-print(response.text)
-print()
-
-
-headers = {
-    "Authorization": f"Bearer {token}"
-}
-httpx.get(url + "secure", headers=headers)
